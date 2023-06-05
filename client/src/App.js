@@ -4,34 +4,47 @@ import io from 'socket.io-client';
 
 const App = () => {
   const [socket, setSocket] = useState(null);
-  const [tasks, setTasks] = useState([
-    { task: 'lody', id: 1 },
-    { task: 'lodyczerwone', id: 2 },
-  ]);
+  const [tasks, setTasks] = useState([]);
   const [taskName, setTaskName] = useState('');
 
   useEffect(() => {
     const newSocket = io('http://localhost:8000');
     setSocket(newSocket);
+
+    newSocket.on('updateData', (data) => {
+      setTasks(data);
+    });
+
+    newSocket.on('addTask', (data) => {
+      addTask(data);
+    });
+
+    newSocket.on('removeTask', (removedTask) => {
+      removeTask(removedTask.id);
+    });
+
     return () => {
       newSocket.close();
     };
   }, []);
 
-  const removeTask = (id) => {
-    setTasks((tasks) => tasks.filter((task) => task.id !== id));
-    socket.emit('removeTask', id);
+  const addTask = (task) => {
+    setTasks((prevTasks) => [...prevTasks, task]);
   };
 
-  const addTask = (task) => setTasks((tasks) => [...tasks, task]);
+  const removeTask = (id) => {
+    socket.emit('removeTask', id);
+
+    socket.on('updateData', (updatedTasks) => {
+      setTasks(updatedTasks);
+    });
+  };
 
   const submitForm = (e) => {
     e.preventDefault();
-    addTask({ task: taskName, id: shortid() });
-    console.log(tasks);
-    console.log(taskName);
-    console.log(addTask);
-    socket.emit('addTask', addTask);
+    const newTask = { task: taskName, id: shortid() };
+    addTask(newTask);
+    socket.emit('addTask', newTask);
     setTaskName('');
   };
 
@@ -76,4 +89,5 @@ const App = () => {
     </div>
   );
 };
+
 export default App;
