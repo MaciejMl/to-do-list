@@ -19,10 +19,6 @@ const App = () => {
       addTask(data);
     });
 
-    newSocket.on('removeTask', (removedTask) => {
-      removeTask(removedTask.id);
-    });
-
     return () => {
       newSocket.close();
     };
