@@ -7,7 +7,7 @@ const cors = require('cors');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(express.static(path.join(__dirname, '/client')));
+app.use(express.static(path.join(__dirname, '/client/build')));
 
 const server = app.listen(8000, () => {
   console.log('Server started on port: ', 8000);
