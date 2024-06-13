@@ -9,13 +9,36 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, '/client/build')));
 
-const server = app.listen(8000, () => {
+const server = app.listen(8000, '0.0.0.0', () => {
   console.log('Server started on port: ', 8000);
 });
 
+// zezwala wszystkim adresom z podanego wzorca sieci dostęp do serwera
+
+/*const allowedOrigins = [
+  'http://localhost:3000',
+  /^http:\/\/192\.168\.0\.\d{1,3}$/
+];
+
 const io = socket(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.some(allowedOrigin => allowedOrigin instanceof RegExp ? allowedOrigin.test(origin) : allowedOrigin === origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
+  },
+});
+*/
+
+const io = socket(server, {
+  cors: {
+    origin: ['http://localhost:3000', 'http://192.168.0.200'],
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
