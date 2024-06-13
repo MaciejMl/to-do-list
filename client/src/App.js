@@ -8,7 +8,7 @@ const App = () => {
   const [taskName, setTaskName] = useState('');
 
   useEffect(() => {
-    const newSocket = io('http://localhost:8000');
+    const newSocket = io('http://192.168.0.170:8000');
     setSocket(newSocket);
 
     newSocket.on('updateData', (data) => {
@@ -72,7 +72,7 @@ const App = () => {
             className='text-input'
             autoComplete='off'
             type='text'
-            placeholder='Type your description'
+            placeholder='Type your task'
             id='task-name'
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
